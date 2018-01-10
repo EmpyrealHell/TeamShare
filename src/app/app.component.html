@@ -1,0 +1,78 @@
+<header class='navbar navbar-dark bg-dark'>
+  <div class='navbar-brand'>Team Builder</div>
+</header>
+<div class='container mt-2'>
+  <div class='row'>
+    <div class='col-4'>
+      <h3>Members</h3>
+      <form>
+        <div class='input-group mb-3'>
+          <label for='name' class='sr-only'>Password</label>
+          <input type='text' class='form-control' name='name' id='name' placeholder='Name' [(ngModel)]='name'>
+          <div class='input-group-append'>
+            <button type='submit' class='btn btn-primary' (click)='AddEntrant()'>Add</button>
+          </div>
+        </div>
+      </form>
+      <div class='list-group' *ngIf='entities.length > 0'>
+        <div *ngFor='let entity of entities; let i = index; let first = first; let last = last' class='list-group-item clearfix'>
+          {{entity.name}}
+          <span class='float-right'>
+            <a href='#' (click)='Shift(i, -1)' class='badge' [class.badge-secondary]='first' [class.badge-primary]='!first'><i class='fa fa-arrow-up' aria-hidden='true'></i></a>
+            <a href='#' (click)='Shift(i, 1)' class='badge' [class.badge-secondary]='last' [class.badge-primary]='!last'><i class='fa fa-arrow-down' aria-hidden='true'></i></a>
+            <a href='#' (click)='Remove(i)' class='badge badge-danger'><i class='fa fa-ban' aria-hidden='true'></i></a>
+          </span>
+        </div>
+      </div>
+      <h3>Match List</h3>
+      <div class='list-group' *ngIf='matches.length > 0'>
+        <a *ngFor='let match of matches; let i = index; let first = first; let last = last' class='list-group-item' href='#' (click)='ToggleState(i)' [class.list-group-item-primary]='this.done[i]'>
+          {{i + 1}}
+          <span class='badge badge-primary'>{{match.team1.member1.name}}<br>{{match.team1.member2.name}}</span>
+          vs.
+          <span class='badge badge-danger'>{{match.team2.member1.name}}<br>{{match.team2.member2.name}}</span>
+        </a>
+      </div>
+    </div>
+    <div class='col-8'>
+      <h3>Round Robin</h3>
+      <p>
+        <button type='button' (click)='RebuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5'>Build</button>
+        <button type='button' (click)='BuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5 || !isDirty || matches.length === 0'>Update</button>
+      </p>
+      <table class='table table-sm'>
+        <thead>
+          <tr>
+            <th scope='col'>#</th>
+            <th scope='col' *ngFor='let entity of allPlayers'>{{entity.name}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor='let match of matches; let i = index' (click)='ToggleState(i)' [class.table-primary]='this.done[i]'>
+            <th scope='row'>{{i + 1}}</th>
+            <td *ngFor='let entity of allPlayers'>
+              <span *ngIf='this.IsInMatch(match, entity)' class='badge' [class.badge-primary]='this.IsOnTeam(match.team1, entity)' [class.badge-danger]='this.IsOnTeam(match.team2, entity)'><i class="fa fa-user" aria-hidden="true"></i></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h3>Statistics</h3>
+      <table class='table table-sm'>
+        <thead>
+          <tr>
+            <th scope='col'>&nbsp;</th>
+            <th scope='col'>Player</th>
+            <th scope='col'>Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor='let stat of meta.stats'>
+            <th scope='row'>{{stat.name}}</th>
+            <td>{{stat.playerName}}</td>
+            <td>{{stat.value}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

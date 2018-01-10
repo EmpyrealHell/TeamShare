@@ -3,7 +3,7 @@
 </header>
 <div class='container mt-2'>
   <div class='row'>
-    <div class='col-4'>
+    <div class='col'>
       <h3>Members</h3>
       <form>
         <div class='input-group mb-3'>
@@ -24,38 +24,6 @@
           </span>
         </div>
       </div>
-      <h3>Match List</h3>
-      <div class='list-group' *ngIf='matches.length > 0'>
-        <a *ngFor='let match of matches; let i = index; let first = first; let last = last' class='list-group-item' href='#' (click)='ToggleState(i)' [class.list-group-item-primary]='this.done[i]'>
-          {{i + 1}}
-          <span class='badge badge-primary'>{{match.team1.member1.name}}<br>{{match.team1.member2.name}}</span>
-          vs.
-          <span class='badge badge-danger'>{{match.team2.member1.name}}<br>{{match.team2.member2.name}}</span>
-        </a>
-      </div>
-    </div>
-    <div class='col-8'>
-      <h3>Round Robin</h3>
-      <p>
-        <button type='button' (click)='RebuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5'>Build</button>
-        <button type='button' (click)='BuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5 || !isDirty || matches.length === 0'>Update</button>
-      </p>
-      <table class='table table-sm'>
-        <thead>
-          <tr>
-            <th scope='col'>#</th>
-            <th scope='col' *ngFor='let entity of allPlayers'>{{entity.name}}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor='let match of matches; let i = index' (click)='ToggleState(i)' [class.table-primary]='this.done[i]'>
-            <th scope='row'>{{i + 1}}</th>
-            <td *ngFor='let entity of allPlayers'>
-              <span *ngIf='this.IsInMatch(match, entity)' class='badge' [class.badge-primary]='this.IsOnTeam(match.team1, entity)' [class.badge-danger]='this.IsOnTeam(match.team2, entity)'><i class="fa fa-user" aria-hidden="true"></i></span>
-            </td>
-          </tr>
-        </tbody>
-      </table>
       <h3>Statistics</h3>
       <table class='table table-sm'>
         <thead>
@@ -73,6 +41,39 @@
           </tr>
         </tbody>
       </table>
+    </div>
+    <div class='col-8'>
+      <h3>Round Robin</h3>
+      <p>
+        <button type='button' (click)='RebuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5'>Build</button>
+        <button type='button' (click)='BuildBracket()' class='btn btn-primary' [disabled]='entities.length < 5 || !isDirty || matches.length === 0'>Update</button>
+        <button type='button' *ngIf='!tableView' (click)='tableView = !tableView' class='btn btn-primary float-right'>To Table View</button>
+        <button type='button' *ngIf='tableView' (click)='tableView = !tableView' class='btn btn-primary float-right'>To List View</button>
+      </p>
+      <table class='table table-sm' *ngIf='tableView'>
+        <thead>
+          <tr>
+            <th scope='col'>#</th>
+            <th scope='col' *ngFor='let entity of allPlayers'>{{entity.name}}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor='let match of matches; let i = index' (click)='ToggleState(i)' [class.table-primary]='this.done[i]'>
+            <th scope='row'>{{i + 1}}</th>
+            <td *ngFor='let entity of allPlayers'>
+              <span *ngIf='this.IsInMatch(match, entity)' class='badge' [class.badge-primary]='this.IsOnTeam(match.team1, entity)' [class.badge-danger]='this.IsOnTeam(match.team2, entity)'><i class="fa fa-user" aria-hidden="true"></i></span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div class='list-unstyled row' *ngIf='!tableView'>
+        <a *ngFor='let match of matches; let i = index; let first = first; let last = last' class='list-group-item col-12 col-sm-12 col-med-6 col-lg-6 col-xl-6' href='#' (click)='ToggleState(i)' [class.list-group-item-primary]='this.done[i]'>
+          <strong>{{i + 1}}: </strong>
+          <span class='badge badge-primary'>{{match.team1.member1.name}} & {{match.team1.member2.name}}</span>
+          vs.
+          <span class='badge badge-danger'>{{match.team2.member1.name}} & {{match.team2.member2.name}}</span>
+        </a>
+      </div>
     </div>
   </div>
 </div>

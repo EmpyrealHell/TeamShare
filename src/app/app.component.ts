@@ -220,6 +220,7 @@ export class AppComponent {
   meta: Meta;
   round: number;
   isDirty: boolean;
+  tableView: boolean;
   constructor() {
     this.entities = [];
     this.allPlayers = [];
@@ -228,6 +229,7 @@ export class AppComponent {
     this.meta = new Meta();
     this.round = 0;
     this.isDirty = false;
+    this.tableView = true;
   }
   AddEntrant() {
     this.entities.push(new Player(this.name));
@@ -275,6 +277,10 @@ export class AppComponent {
   IsOnTeam(team: Team, entity: Player) {
     return team.member1 === entity || team.member2 === entity;
   }
+  Round(value: number, precision: number) {
+    const factor = Math.pow(10, precision);
+    return Math.round(value * factor) / factor;
+  }
   Analyze() {
     const playerMeta: PlayerMeta[] = [];
     for (let i = 0; i < this.entities.length; i++) {
@@ -317,10 +323,10 @@ export class AppComponent {
     this.meta.AddStat('Shortest Play Streak', shortestIn.player, shortestIn.shortestIn);
     this.meta.AddStat('Longest Bench Streak', longestOut.player, longestOut.longestOut);
     this.meta.AddStat('Shortest Bench Streak', shortestOut.player, shortestOut.shortestOut);
-    this.meta.AddStat('Highest Average Play Streak', longestAvgIn.player, longestAvgIn.averageIn);
-    this.meta.AddStat('Lowest Average Play Streak', shortestAvgIn.player, shortestAvgIn.averageIn);
-    this.meta.AddStat('Highest Average Bench Streak', longestAvgOut.player, longestAvgOut.averageOut);
-    this.meta.AddStat('Lowest Average Bench Streak', shortestAvgOut.player, shortestAvgOut.averageOut);
+    this.meta.AddStat('Highest Average Play Streak', longestAvgIn.player, this.Round(longestAvgIn.averageIn, 2));
+    this.meta.AddStat('Lowest Average Play Streak', shortestAvgIn.player, this.Round(shortestAvgIn.averageIn, 2));
+    this.meta.AddStat('Highest Average Bench Streak', longestAvgOut.player, this.Round(longestAvgOut.averageOut, 2));
+    this.meta.AddStat('Lowest Average Bench Streak', shortestAvgOut.player, this.Round(shortestAvgOut.averageOut, 2));
   }
   IsCarryover(allMatches: Match[], carryover: number, team1: Team, team2: Team) {
     for (let i = 0; i < carryover; i++) {
